@@ -1,0 +1,17 @@
+version: 0.2
+
+phases:
+  build:
+    commands:
+       - npm install
+       - npm run test
+  post_build:
+    commands:
+       - rm -rf config
+       - rm -rf .git
+       - rm -rf spec
+       - rm package*
+       - rm .gitignore
+artifacts:
+  files:
+     - '**/*'

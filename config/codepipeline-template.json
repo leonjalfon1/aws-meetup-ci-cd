@@ -1,0 +1,121 @@
+{
+	"pipeline": {
+        "roleArn": "arn:aws:iam::027065296145:role/service-role/aws-meetup-codepipeline-role", 
+        "stages": [
+            {
+                "name": "Source", 
+                "actions": [
+                    {
+                        "inputArtifacts": [], 
+                        "name": "Source", 
+                        "actionTypeId": {
+                            "category": "Source", 
+                            "owner": "AWS", 
+                            "version": "1", 
+                            "provider": "S3"
+                        }, 
+                        "outputArtifacts": [
+                            {
+                                "name": "SourceArtifact"
+                            }
+                        ], 
+                        "configuration": {
+                            "S3Bucket": "aws-meetup-demo", 
+                            "PollForSourceChanges": "false", 
+                            "S3ObjectKey": "aws-meetup-pullrequest-handler/pr-number.zip"
+                        }, 
+                        "runOrder": 1
+                    }
+                ]
+            }, 
+            {
+                "name": "Build", 
+                "actions": [
+                    {
+                        "inputArtifacts": [
+                            {
+                                "name": "SourceArtifact"
+                            }
+                        ], 
+                        "name": "Build", 
+                        "actionTypeId": {
+                            "category": "Build", 
+                            "owner": "AWS", 
+                            "version": "1", 
+                            "provider": "CodeBuild"
+                        }, 
+                        "outputArtifacts": [
+                            {
+                                "name": "BuildArtifact"
+                            }
+                        ], 
+                        "configuration": {
+                            "ProjectName": "aws-meetup-build"
+                        }, 
+                        "runOrder": 1
+                    }
+                ]
+            }, 
+            {
+                "name": "Deployment", 
+                "actions": [
+                    {
+                        "inputArtifacts": [
+                            {
+                                "name": "SourceArtifact"
+                            }
+                        ], 
+                        "name": "Provisioning", 
+                        "actionTypeId": {
+                            "category": "Deploy", 
+                            "owner": "AWS", 
+                            "version": "1", 
+                            "provider": "CloudFormation"
+                        }, 
+                        "outputArtifacts": [
+                            {
+                                "name": "ProvisioningArtifact"
+                            }
+                        ], 
+                        "configuration": {
+                            "ActionMode": "CREATE_UPDATE", 
+                            "RoleArn": "arn:aws:iam::027065296145:role/aws-meetup-cloudformation-role", 
+                            "Capabilities": "CAPABILITY_NAMED_IAM", 
+                            "StackName": "aws-meetup-demo-stack-pr-number", 
+                            "OutputFileName": "provisioning-details.json", 
+                            "TemplateConfiguration": "SourceArtifact::config/infrastructure.conf", 
+                            "TemplatePath": "SourceArtifact::config/infrastructure.json"
+                        }, 
+                        "runOrder": 1
+                    }, 
+                    {
+                        "inputArtifacts": [
+                            {
+                                "name": "BuildArtifact"
+                            }
+                        ], 
+                        "name": "Deploy", 
+                        "actionTypeId": {
+                            "category": "Deploy", 
+                            "owner": "AWS", 
+                            "version": "1", 
+                            "provider": "S3"
+                        }, 
+                        "outputArtifacts": [], 
+                        "configuration": {
+                            "Extract": "true", 
+                            "BucketName": "aws-meetup-demo-pr-number"
+                        }, 
+                        "runOrder": 2
+                    }
+                ]
+            }
+        ], 
+        "artifactStore": {
+            "type": "S3", 
+            "location": "leonj-aws-meetup-demo"
+        }, 
+        "name": "aws-meetup-codepipeline-pr-number", 
+        "version": 9
+    }
+}
