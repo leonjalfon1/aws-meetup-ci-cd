@@ -34,7 +34,7 @@
     ]
 }
 ```
- - Create a new role called "aws-meetup-build" to be used by codebuild
+ - Create a new role called "aws-meetup-build" to be used by codebuild with the "AdministrationAccess" policy
  - Create a new role called "aws-meetup-cloudformation" to be used by cloudformation
  - Create a new role called "aws-meetup-codepipeline" to be used by codepipeline
  - Create a new role called "aws-meetup-lambda" with the policy "aws-meetup-lambda-policy" to be used by lambda
