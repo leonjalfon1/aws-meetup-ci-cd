@@ -1,15 +1,15 @@
 # Pipeline Implementation
 
-1. Fork the repository
+## 1. Fork the repository
 
  - Browse to the repository "https://github.com/leonjalfon1/aws-meetup-ci-cd"
  - Fork the repository
  
-2. Create S3 bucket to store pull request source code
+## 2. Create S3 bucket to store pull request source code
 
  - Create a buccket called "aws-meetup-sources" with versioning enabled 
  
-3. Create the required roles and policies
+## 3. Create the required roles and policies
 
  - Create a new policy called "aws-meetup-lambda" with the permissions below:
 ```
