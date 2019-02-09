@@ -4,8 +4,9 @@ phases:
   build:
     commands:
       - export PULLREQUEST_ID=pr-$(echo ${CODEBUILD_SOURCE_VERSION} | cut -d'/' -f 2)
-      - cat config/codepipeline-template.json | sed -e "s/aws-meetup-codepipeline-pr-number/aws-meetup-codepipeline-${PULLREQUEST_ID}/g" -e "s/aws-meetup-pullrequest-handler\/pr-number.zip/aws-meetup-pullrequest-handler\/${PULLREQUEST_ID}.zip/g" -e "s/aws-meetup-demo-stack-pr-number/aws-meetup-demo-stack-${PULLREQUEST_ID}/g" -e "s/aws-meetup-demo-pr-number/aws-meetup-demo-${PULLREQUEST_ID}/g" > config/codepipeline.json
+      - cat config/codepipeline-template.json | sed -e "s/aws-meetup-pr-number/aws-meetup-${PULLREQUEST_ID}/g" -e "s/aws-meetup-handler\/pr-number.zip/aws-meetup-handler\/${PULLREQUEST_ID}.zip/g" -e "s/aws-meetup-pr-number/aws-meetup-${PULLREQUEST_ID}/g" -e "s/aws-meetup-pr-number/aws-meetup-${PULLREQUEST_ID}/g" > config/codepipeline.json
       - cat config/infrastructure-template.conf | sed -e "s/aws-meetup-demo-pr-number/aws-meetup-demo-${PULLREQUEST_ID}/g" > config/infrastructure.conf
+      - cat config/codebuild-cleanup-template.yml | sed -e "s/aws-meetup-pr-number/aws-meetup-${PULLREQUEST_ID}/g" > config/codebuild-cleanup.yml
       - zip -r ${PULLREQUEST_ID}.zip .
       - if [ -z "$(aws codepipeline list-pipelines | grep aws-meetup-codepipeline-${PULLREQUEST_ID})" ]; then aws codepipeline create-pipeline --cli-input-json file://config/codepipeline.json && echo "Pipeline aws-meetup-codepipeline-${PULLREQUEST_ID} Created" ; else echo "Pipeline aws-meetup-codepipeline-${PULLREQUEST_ID} already exists"; fi
 artifacts:

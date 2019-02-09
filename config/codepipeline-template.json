@@ -1,6 +1,6 @@
 {
-	"pipeline": {
-        "roleArn": "arn:aws:iam::027065296145:role/service-role/aws-meetup-codepipeline-role", 
+    "pipeline": {
+        "roleArn": "arn:aws:iam::027065296145:role/service-role/aws-meetup-codepipeline", 
         "stages": [
             {
                 "name": "Source", 
@@ -20,9 +20,9 @@
                             }
                         ], 
                         "configuration": {
-                            "S3Bucket": "aws-meetup-demo", 
+                            "S3Bucket": "aws-meetup-sources", 
                             "PollForSourceChanges": "false", 
-                            "S3ObjectKey": "aws-meetup-pullrequest-handler/pr-number.zip"
+                            "S3ObjectKey": "aws-meetup-handler/pr-number.zip"
                         }, 
                         "runOrder": 1
                     }
@@ -79,9 +79,9 @@
                         ], 
                         "configuration": {
                             "ActionMode": "CREATE_UPDATE", 
-                            "RoleArn": "arn:aws:iam::027065296145:role/aws-meetup-cloudformation-role", 
+                            "RoleArn": "arn:aws:iam::027065296145:role/aws-meetup-cloudformation", 
                             "Capabilities": "CAPABILITY_NAMED_IAM", 
-                            "StackName": "aws-meetup-demo-stack-pr-number", 
+                            "StackName": "aws-meetup-pr-number", 
                             "OutputFileName": "provisioning-details.json", 
                             "TemplateConfiguration": "SourceArtifact::config/infrastructure.conf", 
                             "TemplatePath": "SourceArtifact::config/infrastructure.json"
@@ -104,7 +104,95 @@
                         "outputArtifacts": [], 
                         "configuration": {
                             "Extract": "true", 
-                            "BucketName": "aws-meetup-demo-pr-number"
+                            "BucketName": "aws-meetup-pr-number"
+                        }, 
+                        "runOrder": 2
+                    }
+                ]
+            }, 
+            {
+                "name": "Test", 
+                "actions": [
+                    {
+                        "inputArtifacts": [
+                            {
+                                "name": "ProvisioningArtifact"
+                            }
+                        ], 
+                        "name": "RunTests", 
+                        "actionTypeId": {
+                            "category": "Invoke", 
+                            "owner": "AWS", 
+                            "version": "1", 
+                            "provider": "Lambda"
+                        }, 
+                        "outputArtifacts": [
+                            {
+                                "name": "TestArtifact"
+                            }
+                        ], 
+                        "configuration": {
+                            "FunctionName": "aws-meetup-runtests", 
+                            "UserParameters": "{\"file\":\"provisioning-details.json\", \"artifact\":\"ProvisioningArtifact\"}"
+                        }, 
+                        "runOrder": 1
+                    }
+                ]
+            }, 
+            {
+                "name": "Approval", 
+                "actions": [
+                    {
+                        "inputArtifacts": [], 
+                        "name": "Approval", 
+                        "actionTypeId": {
+                            "category": "Approval", 
+                            "owner": "AWS", 
+                            "version": "1", 
+                            "provider": "Manual"
+                        }, 
+                        "outputArtifacts": [], 
+                        "configuration": {}, 
+                        "runOrder": 1
+                    }
+                ]
+            }, 
+            {
+                "name": "Cleanup", 
+                "actions": [
+                    {
+                        "inputArtifacts": [
+                            {
+                                "name": "SourceArtifact"
+                            }
+                        ], 
+                        "name": "CleanS3Bucket", 
+                        "actionTypeId": {
+                            "category": "Test", 
+                            "owner": "AWS", 
+                            "version": "1", 
+                            "provider": "CodeBuild"
+                        }, 
+                        "outputArtifacts": [], 
+                        "configuration": {
+                            "ProjectName": "aws-meetup-cleanup"
+                        }, 
+                        "runOrder": 1
+                    }, 
+                    {
+                        "inputArtifacts": [], 
+                        "name": "DeleteEnvironment", 
+                        "actionTypeId": {
+                            "category": "Deploy", 
+                            "owner": "AWS", 
+                            "version": "1", 
+                            "provider": "CloudFormation"
+                        }, 
+                        "outputArtifacts": [], 
+                        "configuration": {
+                            "StackName": "aws-meetup-pr-number", 
+                            "ActionMode": "DELETE_ONLY", 
+                            "RoleArn": "arn:aws:iam::027065296145:role/aws-meetup-cloudformation"
                         }, 
                         "runOrder": 2
                     }
@@ -113,9 +201,9 @@
         ], 
         "artifactStore": {
             "type": "S3", 
-            "location": "leonj-aws-meetup-demo"
+            "location": "aws-meetup-sources"
         }, 
-        "name": "aws-meetup-codepipeline-pr-number", 
-        "version": 9
+        "name": "aws-meetup-pr-number", 
+        "version": 10
     }
 }
