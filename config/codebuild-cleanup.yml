@@ -1,0 +1,6 @@
+version: 0.2
+
+phases:
+  build:
+    commands:
+       - aws s3 rm s3://aws-meetup-demo-pr-4 --recursive
