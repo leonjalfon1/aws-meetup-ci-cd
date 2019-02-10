@@ -108,7 +108,33 @@ def run_automation_tests(job_id, provisioning_details_file):
     try:
         
         print(provisioning_details_file)
+        client = boto3.client('batch', 'us-east-1')
         
+        analyzer_job = client.submit_job(
+            
+        jobName='aws-meetup-demo',
+        jobQueue='first-job-queue',
+        jobDefinition='first-job:1',
+        
+        containerOverrides={
+          'command': ['python', 'service.py'],
+          'environment': [
+                {
+                    'name': 'BATCH_FILE_TYPE',
+                    'value': 'script'
+                },
+                {
+                    'name': 'BATCH_FILE_S3_URL',
+                    'value': 's3://demo-aws-batch-101/mapjob.sh'
+                },
+                {
+                    'name': 'FOO',
+                    'value': '80'
+                }
+            ]
+          }
+        )
+    
         put_job_success(job_id, 'Run automation tests success') 
         return
         
