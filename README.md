@@ -39,7 +39,7 @@
  - Create a new role called "aws-meetup-codepipeline" to be used by codepipeline
  - Create a new role called "aws-meetup-lambda" with the policy "aws-meetup-lambda-policy" to be used by lambda
  
-4. Create lambda function to trigger tests
+## 4. Create lambda function to trigger tests
 
  - Create a new lambda function called "aws-meetup-runtests"
  - Set "Python 2.7" as runtime
