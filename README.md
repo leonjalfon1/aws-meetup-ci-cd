@@ -37,7 +37,7 @@
  - Create a new role called "aws-meetup-build" to be used by codebuild with the "AdministrationAccess" policy
  - Create a new role called "aws-meetup-cloudformation" to be used by cloudformation with the "AdministrationAccess" policy
  - Create a new role called "aws-meetup-codepipeline" to be used by codepipeline
- - Create a new role called "aws-meetup-lambda" to be used by lambda with the polices "aws-meetup-lambda-policy" and "AdministratorAccess"
+ - Create a new role called "aws-meetup-lambda" to be used by lambda with the polices "aws-meetup-lambda-policy", "AdministratorAccess", "AWSBatchServiceRole" and "AWSBatchFullAccess"
  
 ## 4. Create lambda function to trigger tests
 
