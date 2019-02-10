@@ -2,7 +2,6 @@
 
 ## 1. Fork the repository
 
- - Browse to the repository "https://github.com/leonjalfon1/aws-meetup-ci-cd"
  - Fork the repository
  
 ## 2. Create S3 bucket to store pull request source code
