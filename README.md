@@ -37,7 +37,7 @@
  - Create a new role called "aws-meetup-build" to be used by codebuild with the "AdministrationAccess" policy
  - Create a new role called "aws-meetup-cloudformation" to be used by cloudformation with the "AdministrationAccess" policy
  - Create a new role called "aws-meetup-codepipeline" to be used by codepipeline
- - Create a new role called "aws-meetup-lambda" with the policy "aws-meetup-lambda-policy" to be used by lambda
+ - Create a new role called "aws-meetup-lambda" to be used by lambda with the polices "aws-meetup-lambda-policy" and "AWSBatchServiceRole"
  
 ## 4. Create lambda function to trigger tests
 
@@ -46,18 +46,18 @@
  - Use the role "aws-meetup-lambda"
  - Use the script stored in "config/lambda-runtests.py" 
  
-5. Create lambda function to clean pull request bucket
+## 5. Create lambda function to clean pull request bucket
 
  - Create a new lambda function called "aws-meetup-cleanup"
  - Set "Python 2.7" as runtime
  - Use the role "aws-meetup-lambda"
  - Use the script stored in "config/lambda-cleanup.py"
  
-6. Create batch job to run tests
+## 6. Create batch job to run tests
 
  - TODO
 
-7. Create a codebuild project to build the application
+## 7. Create a codebuild project to build the application
 
  - You must create it from the codepipeline editor (to use codepipeline as sources)
  - Create a codebuild project called "aws-meetup-build"
@@ -65,7 +65,7 @@
  - Use the existent role called "aws-meetup-build"
  - As buildspec use the file "config/codebuild-build.yml"
 
- 8. Create a codebuild project to build the application
+## 8. Create a codebuild project to build the application
 
  - You must create it from the codepipeline editor (to use codepipeline as sources)
  - Create a codebuild project called "aws-meetup-cleanup"
@@ -73,7 +73,7 @@
  - Use the existent role called "aws-meetup-build"
  - As buildspec use the file "config/codebuild-cleanup.yml"
  
- 9. Create codebuild project to generate a codepipeline for each pull request
+## 9. Create codebuild project to generate a codepipeline for each pull request
 
  - Create a codebuild project called "aws-meetup-handler"
  - Select github as provider
